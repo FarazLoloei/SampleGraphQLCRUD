@@ -115,9 +115,11 @@ mutation {
 
 ## ✍️ Author
 
-**Faraz Loloei**  
-Software engineer, Software analyzer and Software developer also Web & Data Science Master's Student | .NET Developer | GraphQL Enthusiast  
-🇩🇪 Currently based in Germany
+**Faraz Loloei**
+
+Software Engineer and Web & Data Science Master's Student, specializing in .NET and GraphQL.
+
+🇩🇪 Currently based in Germany.
 
 ---
 
