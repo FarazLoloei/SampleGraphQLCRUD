@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SampleGraphQLCRUD.API.Data;
 using SampleGraphQLCRUD.API.GraphQL;
+using SampleGraphQLCRUD.API.GraphQL.Types;
 
 namespace SampleGraphQLCRUD.API
 {
