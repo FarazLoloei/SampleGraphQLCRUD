@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using SampleGraphQLCRUD.API.Data;
+using SampleGraphQLCRUD.API.GraphQL;
+
 namespace SampleGraphQLCRUD.API
 {
     public class Program
@@ -13,6 +17,20 @@ namespace SampleGraphQLCRUD.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Use SQLite file
+            builder.Services.AddPooledDbContextFactory<ApplicationDbContext>(opt =>
+                opt.UseSqlite("Data Source=app.db"));
+
+            builder.Services
+                .AddGraphQLServer()
+                .AddQueryType<Query>()
+                .AddMutationType<Mutation>()
+                .AddProjections()
+                .AddFiltering()
+                .AddSorting()
+                .AddType<CustomerType>()
+                .AddType<PurchaseType>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -24,25 +42,25 @@ namespace SampleGraphQLCRUD.API
 
             app.UseAuthorization();
 
-            var summaries = new[]
-            {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
+            //var summaries = new[]
+            //{
+            //    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            //};
 
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast
-                    {
-                        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                        TemperatureC = Random.Shared.Next(-20, 55),
-                        Summary = summaries[Random.Shared.Next(summaries.Length)]
-                    })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast")
-            .WithOpenApi();
+            //app.MapGet("/weatherforecast", (HttpContext httpContext) =>
+            //{
+            //    var forecast = Enumerable.Range(1, 5).Select(index =>
+            //        new WeatherForecast
+            //        {
+            //            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+            //            TemperatureC = Random.Shared.Next(-20, 55),
+            //            Summary = summaries[Random.Shared.Next(summaries.Length)]
+            //        })
+            //        .ToArray();
+            //    return forecast;
+            //})
+            //.WithName("GetWeatherForecast")
+            //.WithOpenApi();
 
             app.Run();
         }
