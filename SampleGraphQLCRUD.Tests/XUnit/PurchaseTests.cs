@@ -2,6 +2,7 @@
 using SampleGraphQLCRUD.API.Models;
 using SampleGraphQLCRUD.Tests.XUnit.TestCases;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace SampleGraphQLCRUD.Tests.XUnit;
 
@@ -31,7 +32,7 @@ public class PurchaseTests
     [Theory]
     [MemberData(nameof(PurchaseTestCases.InvalidConstructorParameters), MemberType = typeof(PurchaseTestCases))]
     public void Constructor_WithInvalidParameters_ThrowsValidationException(
-        string productName, decimal price, int quantity, int customerId, string testCase)
+        string productName, decimal price, int quantity, int customerId, string expectedErrorMessage)
     {
         // Act
         Action act = () => new Purchase(productName, price, quantity, customerId);
@@ -39,7 +40,7 @@ public class PurchaseTests
         // Assert
         act.Should()
             .Throw<ValidationException>()
-            .WithMessage($"*{testCase}*");
+            .WithMessage(expectedErrorMessage);
     }
 
     [Fact]
@@ -63,10 +64,10 @@ public class PurchaseTests
     [Theory]
     [MemberData(nameof(PurchaseTestCases.InvalidProductDetailsParameters), MemberType = typeof(PurchaseTestCases))]
     public void UpdateProductDetails_WithInvalidParameters_ThrowsValidationException(
-        string productName, decimal price, int quantity, string testCase)
+    string productName, decimal price, int quantity, string expectedErrorMessage)
     {
         // Arrange
-        var purchase = new Purchase("Valid Product", 50.00m, 2, 1);
+        var purchase = new Purchase("Valid Product", 10.99m, 1, 1);
 
         // Act
         Action act = () => purchase.UpdateProductDetails(productName, price, quantity);
@@ -74,7 +75,7 @@ public class PurchaseTests
         // Assert
         act.Should()
             .Throw<ValidationException>()
-            .WithMessage($"*{testCase}*");
+            .WithMessage(expectedErrorMessage);
     }
 
     [Fact]
@@ -121,10 +122,17 @@ public class PurchaseTests
     }
 
     [Fact]
-    public void PrivateConstructor_ForEfCore_InitializesWithDefaultValues()
+    public void ProtectedConstructor_ForEfCore_InitializesWithDefaultValues()
     {
-        // Arrange & Act
-        var purchase = Activator.CreateInstance<Purchase>();
+        // Arrange
+        var constructor = typeof(Purchase).GetConstructor(
+            BindingFlags.Instance | BindingFlags.NonPublic,
+            null,
+            Type.EmptyTypes,
+            null)!;
+
+        // Act
+        var purchase = (Purchase)constructor.Invoke(null);
 
         // Assert
         purchase.ProductName.Should().BeEmpty();
@@ -134,4 +142,25 @@ public class PurchaseTests
         purchase.PurchaseDateUTC.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         purchase.Customer.Should().BeNull();
     }
+
+    //[Fact]
+    //public async Task EfCore_CanCreatePurchaseWithDefaultValues()
+    //{
+    //    // Arrange
+    //    await using var context = new ApplicationDbContext()//(/* your options */);
+
+    //    // Act
+    //    var purchase = context.Purchases.Add(new Purchase(
+    //        "Test Product",
+    //        10.99m,
+    //        1,
+    //        1)).Entity;
+    //    await context.SaveChangesAsync();
+
+    //    var loadedPurchase = await context.Purchases.FindAsync(purchase.Id);
+
+    //    // Assert
+    //    loadedPurchase.Should().NotBeNull();
+    //    // Verify default values if needed
+    //}
 }

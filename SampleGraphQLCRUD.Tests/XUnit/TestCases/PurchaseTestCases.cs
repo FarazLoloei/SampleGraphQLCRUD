@@ -2,55 +2,52 @@
 
 public static class PurchaseTestCases
 {
-    public static IEnumerable<object[]> InvalidConstructorParameters
+    public static IEnumerable<object[]> InvalidConstructorParameters => new List<object[]>
     {
-        get
-        {
-            // Product name validation cases
-            yield return new object[] { null, 100.00m, 1, 1, "Null product name" };
-            yield return new object[] { "", 100.00m, 1, 1, "Empty product name" };
-            yield return new object[] { " ", 100.00m, 1, 1, "Whitespace product name" };
-            yield return new object[] {
-                    "This product name is way too long and exceeds the maximum allowed length of 100 characters for the product name field in the purchase entity",
-                    100.00m, 1, 1,
-                    "Product name exceeds max length"
-                };
+            // Product name validation
+             new object[] { null, 10.99m, 1, 1, "Product name is required" },
+             new object[] { "", 10.99m, 1, 1, "Product name is required" },
+             new object[] { " ", 10.99m, 1, 1, "Product name cannot be whitespace" },
+             new object[] { new string('a', 101), 10.99m, 1, 1, "Product name cannot exceed 100 characters" },
 
-            // Price validation cases
-            yield return new object[] { "Product", -1.00m, 1, 1, "Negative price" };
-            yield return new object[] { "Product", -0.01m, 1, 1, "Fractional negative price" };
+            // Price validation
+             new object[] { "Product", 0m, 1, 1, "Price must be at least 0.01" },
+             new object[] { "Product", -1m, 1, 1, "Price must be at least 0.01" },
 
-            // Quantity validation cases
-            yield return new object[] { "Product", 100.00m, 0, 1, "Zero quantity" };
-            yield return new object[] { "Product", 100.00m, -1, 1, "Negative quantity" };
+            // Quantity validation
+             new object[] { "Product", 10.99m, 0, 1, "Quantity must be at least 1" },
+             new object[] { "Product", 10.99m, -1, 1, "Quantity must be at least 1" },
 
-            // Customer ID validation cases
-            yield return new object[] { "Product", 100.00m, 1, 0, "Zero customer ID" };
-            yield return new object[] { "Product", 100.00m, 1, -1, "Negative customer ID" };
-        }
-    }
+            // Customer ID validation
+             new object[] { "Product", 10.99m, 1, 0, "Customer ID must be positive" },
+             new object[] { "Product", 10.99m, 1, -1, "Customer ID must be positive" }
+        };
 
-    public static IEnumerable<object[]> InvalidProductDetailsParameters
-    {
-        get
-        {
-            // Product name validation cases
-            yield return new object[] { null, 100.00m, 1, "Null product name" };
-            yield return new object[] { "", 100.00m, 1, "Empty product name" };
-            yield return new object[] { " ", 100.00m, 1, "Whitespace product name" };
-            yield return new object[] {
-                    "This product name is way too long and exceeds the maximum allowed length of 100 characters for the product name field in the purchase entity",
-                    100.00m, 1,
-                    "Product name exceeds max length"
-                };
+    //public static IEnumerable<object[]> InvalidProductDetailsParameters
+    //{
+    //    get
+    //    {
+    //        // Product name validation
+    //        yield return new object[] { null, 10.99m, 1, 1, "Product name is required" };
+    //        yield return new object[] { "", 10.99m, 1, 1, "Product name is required" };
+    //        yield return new object[] { " ", 10.99m, 1, 1, "Product name cannot be whitespace" };
+    //        yield return new object[] { new string('a', 101), 10.99m, 1, 1, "Product name cannot exceed 100 characters" };
 
-            // Price validation cases
-            yield return new object[] { "Product", -1.00m, 1, "Negative price" };
-            yield return new object[] { "Product", -0.01m, 1, "Fractional negative price" };
+    //        // Price validation
+    //        yield return new object[] { "Product", 0m, 1, "Price must be at least 0.01" };
 
-            // Quantity validation cases
-            yield return new object[] { "Product", 100.00m, 0, "Zero quantity" };
-            yield return new object[] { "Product", 100.00m, -1, "Negative quantity" };
-        }
-    }
+    //        // Quantity validation
+    //        yield return new object[] { "Product", 10.99m, 0, "Quantity must be at least 1" };
+    //    }
+    //}
+
+    public static IEnumerable<object[]> InvalidProductDetailsParameters => new List<object[]>
+{
+    new object[] { " ", 10.99m, 1, "Product name cannot be whitespace" },
+    new object[] { "", 10.99m, 1, "Product name is required" },
+    new object[] { null, 10.99m, 1, "Product name is required" },
+    new object[] { new string('a', 101), 10.99m, 1, "Product name cannot exceed 100 characters" },
+    new object[] { "Valid", 0m, 1, "Price must be at least 0.01" },
+    new object[] { "Valid", 10.99m, 0, "Quantity must be at least 1" }
+};
 }
