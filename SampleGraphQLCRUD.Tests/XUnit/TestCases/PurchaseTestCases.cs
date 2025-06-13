@@ -5,10 +5,6 @@ public static class PurchaseTestCases
     // Constants for validation rules
     private const int MaxProductNameLength = 100;
 
-    private const decimal MinPrice = 0.01m;
-    private const int MinQuantity = 1;
-    private const int MinCustomerId = 1;
-
     // Helper method for generating long strings
     private static string LongString(int length) => new string('a', length);
 
