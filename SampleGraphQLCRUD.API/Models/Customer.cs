@@ -19,16 +19,16 @@ public class Customer
     [EmailAddress(ErrorMessage = "Invalid email format")]
     public string Email { get; private set; }
 
-    [Phone]
+    [Phone(ErrorMessage = "Invalid phone number format")]
     public string? Phone { get; private set; }
 
-    [MaxLength(100)]
+    [MaxLength(100, ErrorMessage = "Address exceeds max length")]
     public string? Address { get; private set; }
 
-    [MaxLength(50)]
+    [MaxLength(50, ErrorMessage = "City exceeds max length")]
     public string? City { get; private set; }
 
-    [MaxLength(50)]
+    [MaxLength(50, ErrorMessage = "Country exceeds max length")]
     public string? Country { get; private set; }
 
     public DateTime CreatedAtUTC { get; private set; } = DateTime.UtcNow;
@@ -100,7 +100,11 @@ public class Customer
 
         if (!Validator.TryValidateObject(this, context, results, true))
         {
+            // For constructor validation, throw the first error
             throw new ValidationException(results.First().ErrorMessage);
+
+            // For update methods, you might want to collect all errors
+            // throw new ValidationException(string.Join(", ", results.Select(r => r.ErrorMessage)));
         }
     }
 

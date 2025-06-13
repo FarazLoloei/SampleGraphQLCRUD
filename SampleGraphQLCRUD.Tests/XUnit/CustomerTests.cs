@@ -33,7 +33,7 @@ public class CustomerTests
     [Theory]
     [MemberData(nameof(CustomerTestCases.InvalidConstructorParameters), MemberType = typeof(CustomerTestCases))]
     public void Constructor_WithInvalidParameters_ThrowsValidationException(
-    string firstName, string lastName, string email, string expectedErrorMessage)
+        string firstName, string lastName, string email, string expectedErrorMessage)
     {
         // Act
         Action act = () => new Customer(firstName, lastName, email);
@@ -41,7 +41,18 @@ public class CustomerTests
         // Assert
         act.Should()
             .Throw<ValidationException>()
-            .WithMessage(expectedErrorMessage); // Exact match (no wildcard needed)
+            .WithMessage(expectedErrorMessage);
+    }
+
+    [Theory]
+    [MemberData(nameof(CustomerTestCases.ValidEmailLengthParameters), MemberType = typeof(CustomerTestCases))]
+    public void Constructor_WithValidEmailLength_DoesNotThrow(string email)
+    {
+        // Act
+        Action act = () => new Customer("John", "Doe", email);
+
+        // Assert
+        act.Should().NotThrow();
     }
 
     [Fact]
@@ -63,7 +74,7 @@ public class CustomerTests
     [Theory]
     [MemberData(nameof(CustomerTestCases.InvalidNameUpdateParameters), MemberType = typeof(CustomerTestCases))]
     public void UpdateName_WithInvalidParameters_ThrowsValidationException(
-        string firstName, string lastName, string testCase)
+        string firstName, string lastName, string expectedErrorMessage)
     {
         // Arrange
         var customer = new Customer("John", "Doe", "john.doe@example.com");
@@ -74,7 +85,7 @@ public class CustomerTests
         // Assert
         act.Should()
             .Throw<ValidationException>()
-            .WithMessage($"*{testCase}*");
+            .WithMessage(expectedErrorMessage);
     }
 
     [Fact]
@@ -113,7 +124,7 @@ public class CustomerTests
     [Theory]
     [MemberData(nameof(CustomerTestCases.InvalidContactInfoParameters), MemberType = typeof(CustomerTestCases))]
     public void UpdateContactInfo_WithInvalidParameters_ThrowsValidationException(
-        string phone, string email, string testCase)
+        string phone, string email, string expectedErrorMessage)
     {
         // Arrange
         var customer = new Customer("John", "Doe", "john.doe@example.com");
@@ -124,7 +135,7 @@ public class CustomerTests
         // Assert
         act.Should()
             .Throw<ValidationException>()
-            .WithMessage($"*{testCase}*");
+            .WithMessage(expectedErrorMessage);
     }
 
     [Fact]
@@ -164,7 +175,7 @@ public class CustomerTests
     [Theory]
     [MemberData(nameof(CustomerTestCases.InvalidAddressParameters), MemberType = typeof(CustomerTestCases))]
     public void UpdateAddress_WithTooLongParameters_ThrowsValidationException(
-        string address, string city, string country, string testCase)
+        string address, string city, string country, string expectedErrorMessage)
     {
         // Arrange
         var customer = new Customer("John", "Doe", "john.doe@example.com");
@@ -175,7 +186,7 @@ public class CustomerTests
         // Assert
         act.Should()
             .Throw<ValidationException>()
-            .WithMessage($"*{testCase}*");
+            .WithMessage(expectedErrorMessage);
     }
 
     [Fact]
@@ -206,7 +217,7 @@ public class CustomerTests
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithMessage("*Value cannot be null.*") // Checks for standard null exception message
-            .WithParameterName("purchase"); // Verifies the parameter name
+            .WithMessage("*Value cannot be null.*")
+            .WithParameterName("purchase");
     }
 }
