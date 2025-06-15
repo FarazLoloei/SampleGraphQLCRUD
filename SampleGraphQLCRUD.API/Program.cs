@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using SampleGraphQLCRUD.API.Abstraction;
 using SampleGraphQLCRUD.API.Data;
 using SampleGraphQLCRUD.API.GraphQL;
 using SampleGraphQLCRUD.API.GraphQL.Queries;
 using SampleGraphQLCRUD.API.GraphQL.Types;
+using SampleGraphQLCRUD.API.Services;
 
 namespace SampleGraphQLCRUD.API
 {
@@ -14,7 +16,10 @@ namespace SampleGraphQLCRUD.API
 
             // Use SQLite file
             builder.Services.AddPooledDbContextFactory<ApplicationDbContext>(opt =>
-                opt.UseSqlite("Data Source=GraphQLCrud.db"));
+                opt.UseInMemoryDatabase("GraphQLCrud"));
+
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 
             builder.Services
                 .AddGraphQLServer()
