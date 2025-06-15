@@ -194,7 +194,8 @@ public class CustomerTests
     {
         // Arrange
         var customer = new Customer("John", "Doe", "john.doe@example.com");
-        var purchase = new Purchase("Product", 100.00m, 1, 1);
+        // CORRECTED: Use Guid instead of int for CustomerId
+        var purchase = new Purchase("Product", 100.00m, 1, Guid.NewGuid());
 
         // Act
         customer.AddPurchase(purchase);
