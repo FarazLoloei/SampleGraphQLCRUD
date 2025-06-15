@@ -1,4 +1,4 @@
-﻿using SampleGraphQLCRUD.API.Abstraction;
+using SampleGraphQLCRUD.API.Abstraction;
 using SampleGraphQLCRUD.API.Data;
 using SampleGraphQLCRUD.API.Models;
 
