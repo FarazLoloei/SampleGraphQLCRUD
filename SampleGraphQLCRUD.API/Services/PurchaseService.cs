@@ -9,10 +9,16 @@ public class PurchaseService(ApplicationDbContext _context) : IPurchaseService
     public IQueryable<Purchase> GetAllPurchases()
         => _context.Purchases.AsQueryable();
 
-    public Purchase? GetPurchaseById(int id)
-        => _context.Purchases.FirstOrDefault(p => p.Id == id);
+    public Purchase GetPurchaseById(Guid id)
+    {
+        var purchase = _context.Purchases.FirstOrDefault(p => p.Id == id);
+        if (purchase == null)
+            throw new InvalidOperationException($"Purchase with ID {id} not found.");
 
-    public IEnumerable<Purchase> GetPurchasesByCustomerId(int customerId)
+        return purchase;
+    }
+
+    public IEnumerable<Purchase> GetPurchasesByCustomerId(Guid customerId)
         => _context.Purchases.Where(p => p.CustomerId == customerId).ToList();
 
     public Purchase CreatePurchase(Purchase purchase)
@@ -44,13 +50,13 @@ public class PurchaseService(ApplicationDbContext _context) : IPurchaseService
         return existing;
     }
 
-    public bool DeletePurchase(int id)
+    public void DeletePurchase(Guid id)
     {
         var purchase = _context.Purchases.Find(id);
-        if (purchase == null) return false;
+        if (purchase == null)
+            throw new InvalidOperationException($"Purchase with ID {id} not found.");
 
         _context.Purchases.Remove(purchase);
         _context.SaveChanges();
-        return true;
     }
 }
