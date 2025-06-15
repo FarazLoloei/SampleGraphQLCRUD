@@ -13,6 +13,6 @@ public class CustomerQuery
         => service.GetAllCustomers();
 
     [UseFirstOrDefault]
-    public Customer? GetCustomerById(int id, [Service] ICustomerService service)
+    public Customer? GetCustomerById(Guid id, [Service] ICustomerService service)
         => service.GetCustomerById(id);
 }

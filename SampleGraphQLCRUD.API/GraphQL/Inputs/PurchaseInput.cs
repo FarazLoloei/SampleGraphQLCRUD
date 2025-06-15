@@ -12,5 +12,5 @@ public class PurchaseInput
     public int Quantity { get; set; }
 
     [GraphQLNonNullType]
-    public int CustomerId { get; set; }
+    public Guid CustomerId { get; set; }
 }

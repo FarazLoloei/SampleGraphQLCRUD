@@ -20,21 +20,17 @@ public class PurchaseMutation
     }
 
     public Purchase UpdatePurchase(
-        int id,
+        Guid id,
         PurchaseInput input,
         [Service] IPurchaseService service)
     {
-        throw new NotImplementedException("UpdatePurchase method is not implemented yet.");
         var purchase = service.GetPurchaseById(id);
-        //purchase.UpdateDetails(
-        //    input.ProductName,
-        //    input.Price,
-        //    input.Quantity,
-        //    input.CustomerId
-        //);
+
+        purchase.UpdateProductDetails(purchase.ProductName, input.Price, input.Quantity);
+
         return service.UpdatePurchase(purchase);
     }
 
-    public bool DeletePurchase(int id, [Service] IPurchaseService service)
+    public void DeletePurchase(Guid id, [Service] IPurchaseService service)
         => service.DeletePurchase(id);
 }

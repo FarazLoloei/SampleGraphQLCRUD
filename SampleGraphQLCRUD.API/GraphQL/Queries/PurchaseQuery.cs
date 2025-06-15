@@ -13,6 +13,6 @@ public class PurchaseQuery
         => service.GetAllPurchases();
 
     [UseFirstOrDefault]
-    public Purchase? GetPurchaseById(int id, [Service] IPurchaseService service)
+    public Purchase? GetPurchaseById(Guid id, [Service] IPurchaseService service)
         => service.GetPurchaseById(id);
 }

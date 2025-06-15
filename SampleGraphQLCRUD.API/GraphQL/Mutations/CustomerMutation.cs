@@ -27,7 +27,7 @@ public class CustomerMutation
     }
 
     public Customer UpdateCustomer(
-        int id,
+        Guid id,
         CustomerInput input,
         [Service] ICustomerService service)
     {
@@ -45,6 +45,6 @@ public class CustomerMutation
         return service.UpdateCustomer(customer);
     }
 
-    public bool DeleteCustomer(int id, [Service] ICustomerService service)
+    public void DeleteCustomer(Guid id, [Service] ICustomerService service)
         => service.DeleteCustomer(id);
 }
