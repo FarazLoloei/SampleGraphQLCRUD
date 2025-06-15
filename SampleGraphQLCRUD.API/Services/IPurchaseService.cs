@@ -4,53 +4,58 @@ using SampleGraphQLCRUD.API.Models;
 
 namespace SampleGraphQLCRUD.API.Services;
 
-public class PurchaseService(ApplicationDbContext _context) : IPurchaseService
+public class PurchaseService(ApplicationDbContext dbContext) : IPurchaseService
 {
     public IQueryable<Purchase> GetAllPurchases()
-        => _context.Purchases.AsQueryable();
+        => dbContext.Purchases.AsQueryable();
 
-    public Purchase? GetPurchaseById(int id)
-        => _context.Purchases.FirstOrDefault(p => p.Id == id);
+    public Purchase GetPurchaseById(Guid id) // Updated to match the interface's non-nullable return type
+    {
+        var purchase = dbContext.Purchases.FirstOrDefault(p => p.Id == id);
+        if (purchase == null)
+            throw new InvalidOperationException($"Purchase with ID {id} not found.");
 
-    public IEnumerable<Purchase> GetPurchasesByCustomerId(int customerId)
-        => _context.Purchases.Where(p => p.CustomerId == customerId).ToList();
+        return purchase;
+    }
+
+    public IEnumerable<Purchase> GetPurchasesByCustomerId(Guid customerId)
+        => dbContext.Purchases.Where(p => p.CustomerId == customerId).ToList();
 
     public Purchase CreatePurchase(Purchase purchase)
     {
         // Ensure customer exists
-        if (!_context.Customers.Any(c => c.Id == purchase.CustomerId))
+        if (!dbContext.Customers.Any(c => c.Id == purchase.CustomerId))
             throw new InvalidOperationException("Customer does not exist");
 
-        _context.Purchases.Add(purchase);
-        _context.SaveChanges();
+        dbContext.Purchases.Add(purchase);
+        dbContext.SaveChanges();
         return purchase;
     }
 
     public Purchase UpdatePurchase(Purchase purchase)
     {
-        var existing = _context.Purchases.Find(purchase.Id);
+        var existing = dbContext.Purchases.Find(purchase.Id);
         if (existing == null)
             throw new InvalidOperationException("Purchase not found");
 
         // Ensure customer exists if changing customer
         if (existing.CustomerId != purchase.CustomerId &&
-            !_context.Customers.Any(c => c.Id == purchase.CustomerId))
+            !dbContext.Customers.Any(c => c.Id == purchase.CustomerId))
         {
             throw new InvalidOperationException("New customer does not exist");
         }
 
-        _context.Entry(existing).CurrentValues.SetValues(purchase);
-        _context.SaveChanges();
+        dbContext.Entry(existing).CurrentValues.SetValues(purchase);
+        dbContext.SaveChanges();
         return existing;
     }
 
-    public bool DeletePurchase(int id)
+    public void DeletePurchase(Guid id)
     {
-        var purchase = _context.Purchases.Find(id);
-        if (purchase == null) return false;
+        var purchase = dbContext.Purchases.Find(id);
+        if (purchase == null) throw new InvalidOperationException($"Purchase with ID {id.ToString()} not found.");
 
-        _context.Purchases.Remove(purchase);
-        _context.SaveChanges();
-        return true;
+        dbContext.Purchases.Remove(purchase);
+        dbContext.SaveChanges();
     }
 }
