@@ -1,45 +1,49 @@
-﻿using SampleGraphQLCRUD.API.Abstraction;
+using SampleGraphQLCRUD.API.Abstraction;
 using SampleGraphQLCRUD.API.Data;
 using SampleGraphQLCRUD.API.Models;
 
 namespace SampleGraphQLCRUD.API.Services;
 
-public class CustomerService(ApplicationDbContext _context) : ICustomerService
+public class CustomerService(ApplicationDbContext dbContext) : ICustomerService
 {
     public IQueryable<Customer> GetAllCustomers()
-        => _context.Customers.AsQueryable();
+        => dbContext.Customers.AsQueryable();
 
-    public Customer? GetCustomerById(int id)
-        => _context.Customers.FirstOrDefault(c => c.Id == id);
+    public Customer GetCustomerById(Guid id)
+    {
+        var customer = dbContext.Customers.FirstOrDefault(c => c.Id == id);
+        if (customer == null)
+            throw new InvalidOperationException($"Customer with ID {id} not found.");
+        return customer;
+    }
 
-    public IEnumerable<Purchase> GetPurchasesByCustomerId(int customerId)
-        => _context.Purchases.Where(p => p.CustomerId == customerId).ToList();
+    public IEnumerable<Purchase> GetPurchasesByCustomerId(Guid customerId)
+        => dbContext.Purchases.Where(p => p.CustomerId == customerId).ToList();
 
     public Customer CreateCustomer(Customer customer)
     {
-        _context.Customers.Add(customer);
-        _context.SaveChanges();
+        dbContext.Customers.Add(customer);
+        dbContext.SaveChanges();
         return customer;
     }
 
     public Customer UpdateCustomer(Customer customer)
     {
-        var existing = _context.Customers.Find(customer.Id);
+        var existing = dbContext.Customers.Find(customer.Id);
         if (existing == null)
             throw new InvalidOperationException("Customer not found");
 
-        _context.Entry(existing).CurrentValues.SetValues(customer);
-        _context.SaveChanges();
+        dbContext.Entry(existing).CurrentValues.SetValues(customer);
+        dbContext.SaveChanges();
         return existing;
     }
 
-    public bool DeleteCustomer(int id)
+    public void DeleteCustomer(Guid id)
     {
-        var customer = _context.Customers.Find(id);
-        if (customer == null) return false;
+        var customer = dbContext.Customers.Find(id);
+        if (customer == null) throw new InvalidOperationException($"Customer with ID {id} not found.");
 
-        _context.Customers.Remove(customer);
-        _context.SaveChanges();
-        return true;
+        dbContext.Customers.Remove(customer);
+        dbContext.SaveChanges();
     }
 }

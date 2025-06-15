@@ -6,11 +6,12 @@ public interface ICustomerService
 {
     IQueryable<Customer> GetAllCustomers();
 
-    Customer GetCustomerById(int id);
+    Customer GetCustomerById(Guid id);
 
     Customer CreateCustomer(Customer customer);
 
     Customer UpdateCustomer(Customer customer);
 
-    bool DeleteCustomer(int id);
+    void DeleteCustomer(Guid id);
+
 }

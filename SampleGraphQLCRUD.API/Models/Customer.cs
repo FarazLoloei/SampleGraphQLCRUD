@@ -4,7 +4,7 @@ namespace SampleGraphQLCRUD.API.Models;
 
 public class Customer
 {
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     [Required(ErrorMessage = "First name is required")]
     [MaxLength(50, ErrorMessage = "First name cannot exceed 50 characters")]
@@ -38,6 +38,7 @@ public class Customer
     // Constructor for required properties
     public Customer(string firstName, string lastName, string email)
     {
+        Id = Guid.NewGuid();
         FirstName = firstName;
         LastName = lastName;
         Email = email;

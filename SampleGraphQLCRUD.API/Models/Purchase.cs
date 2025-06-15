@@ -5,7 +5,7 @@ namespace SampleGraphQLCRUD.API.Models;
 
 public class Purchase
 {
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
 
     [Required(ErrorMessage = "Product name is required")]
     [MaxLength(100, ErrorMessage = "Product name cannot exceed 100 characters")]
@@ -23,12 +23,12 @@ public class Purchase
     public DateTime PurchaseDateUTC { get; private set; } = DateTime.UtcNow;
 
     [Required(ErrorMessage = "Customer ID is required")]
-    public int CustomerId { get; private set; }
+    public Guid CustomerId { get; private set; }
 
     [ForeignKey("CustomerId")]
     public Customer? Customer { get; private set; }
 
-    public Purchase(string productName, decimal price, int quantity, int customerId)
+    public Purchase(string productName, decimal price, int quantity, Guid customerId)
     {
         // Validate product details first
         if (string.IsNullOrEmpty(productName))
@@ -42,6 +42,7 @@ public class Purchase
         ValidateCustomerId(customerId);
 
         // Assign values
+        Id = Guid.NewGuid();
         ProductName = productName;
         Price = price;
         Quantity = quantity;
@@ -62,7 +63,7 @@ public class Purchase
         Quantity = quantity;
     }
 
-    public void UpdateCustomerAssociation(int customerId, Customer customer)
+    public void UpdateCustomerAssociation(Guid customerId, Customer customer)
     {
         ValidateCustomerId(customerId);
         ValidateCustomer(customer);
@@ -91,10 +92,10 @@ public class Purchase
             throw new ValidationException("Quantity must be at least 1");
     }
 
-    private void ValidateCustomerId(int customerId)
+    private void ValidateCustomerId(Guid customerId)
     {
-        if (customerId <= 0)
-            throw new ValidationException("Customer ID must be positive");
+        if (customerId == Guid.Empty)
+            throw new ValidationException("Customer ID must be a valid non-empty GUID");
     }
 
     private void ValidateCustomer(Customer customer)

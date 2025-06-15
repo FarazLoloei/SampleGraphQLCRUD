@@ -6,13 +6,13 @@ public interface IPurchaseService
 {
     IQueryable<Purchase> GetAllPurchases();
 
-    Purchase GetPurchaseById(int id);
+    Purchase GetPurchaseById(Guid id);
 
-    IEnumerable<Purchase> GetPurchasesByCustomerId(int customerId);
+    IEnumerable<Purchase> GetPurchasesByCustomerId(Guid customerId);
 
     Purchase CreatePurchase(Purchase purchase);
 
     Purchase UpdatePurchase(Purchase purchase);
 
-    bool DeletePurchase(int id);
+    void DeletePurchase(Guid id);
 }
